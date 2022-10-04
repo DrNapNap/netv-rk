@@ -39,7 +39,7 @@ namespace ChatSystem
 
             try
             {            
-                int idPost = 1;
+                int idPost;
                 idPost++;
 
                 var chat = new Chat() { name = "test", id = idPost, text = text };
