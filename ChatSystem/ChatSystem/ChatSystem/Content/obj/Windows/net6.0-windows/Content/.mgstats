@@ -1,3 +1,1 @@
 Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
-"C:/Development/ChatSystem/ChatSystem/Content/Arial.spritefont","C:/Development/ChatSystem/ChatSystem/Content/bin/Windows/Content/Arial.xnb","FontDescriptionProcessor","SpriteFontContent",2065,37919,2,0250468
-"C:/Development/ChatSystem/ChatSystem/Content/GameThumbnail.png","C:/Development/ChatSystem/ChatSystem/Content/bin/Windows/Content/GameThumbnail.xnb","TextureProcessor","Texture2DContent",5734,16469,0,0362986

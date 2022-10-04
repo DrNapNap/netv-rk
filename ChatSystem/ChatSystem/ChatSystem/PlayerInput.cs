@@ -6,11 +6,9 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
+using System.Text.Json;
 
 namespace ChatSystem
 {
@@ -26,7 +24,7 @@ namespace ChatSystem
         public List<string> messages = new List<string>();
 
         string url = "https://localhost:7235/api/Chat";
-
+        private int idPost;
 
         public PlayerInput(ContentManager content)
         {
@@ -38,18 +36,50 @@ namespace ChatSystem
             HttpClient client = new HttpClient();
 
             try
-            {            
-                int idPost;
+            {
                 idPost++;
 
                 var chat = new Chat() { name = "test", id = idPost, text = text };
                 var data = new StringContent(JsonConvert.SerializeObject(chat), Encoding.UTF8, "application/json");
-                var response = await client.PostAsync(url, data);   
+                var response = await client.PostAsync(url, data);
+
+
 
             }
             catch (Exception)
             {
+
+                Debug.Print("err");
+            }
+
+
+        }
+
+        private async void GetApi()
+        {
+
+
+            try
+            {
+
+                     HttpClient client = new HttpClient();
+            var response = await client.GetAsync(url);
+
+                     var responseStream = await response.Content.ReadAsStreamAsync();
+
+           
+                    var data = await System.Text.Json.JsonSerializer.DeserializeAsync<Chat>(responseStream);
+
+
+                    messages.Add(data.text.ToString());
+
                 
+
+
+            }
+            catch (Exception)
+            {
+
                 Debug.Print("err");
             }
 
@@ -99,9 +129,10 @@ namespace ChatSystem
                                 break;
                             case 13:
                                 if (!PlayerChatText.Equals(""))
-                                    messages.Add(playerChatText.ToLower());
-                                PostApi(PlayerChatText);
+                                    PostApi(PlayerChatText);
+                                GetApi();
                                 playerChatText = "";
+                                
                                 break;
                             default:
                                 break;
@@ -120,13 +151,14 @@ namespace ChatSystem
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.DrawString(arial, PlayerChatText.ToLower(), new Vector2(1400, 80), Color.White);
-            
+
             for (int i = messages.Count - 1; i >= 0; i--)
             {
                 if (i < PlayerInput.MAX_MESSAGES)
                 {
                     int d = 250 - (i * 20);
-                    spriteBatch.DrawString(arial, messages[i], new Vector2(1400, d), Color.White);   
+
+                    spriteBatch.DrawString(arial, messages[i], new Vector2(1400, d), Color.White);
                 }
                 else
                 {
