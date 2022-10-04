@@ -2,9 +2,12 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
@@ -21,12 +24,38 @@ namespace ChatSystem
         public string PlayerChatText { get { return playerChatText; } set { playerChatText = value; } }
 
         public List<string> messages = new List<string>();
-        private string test;
+
+        string url = "https://localhost:7235/api/Chat";
+
 
         public PlayerInput(ContentManager content)
         {
             this.content = content;
         }
+
+        protected async void PostApi(string text)
+        {
+            HttpClient client = new HttpClient();
+
+            try
+            {            
+                int idPost = 1;
+                idPost++;
+
+                var chat = new Chat() { name = "test", id = idPost, text = text };
+                var data = new StringContent(JsonConvert.SerializeObject(chat), Encoding.UTF8, "application/json");
+                var response = await client.PostAsync(url, data);   
+
+            }
+            catch (Exception)
+            {
+                
+                Debug.Print("err");
+            }
+
+
+        }
+
 
         public void handleOverallInput() //get updated 16.6 times every 1 second
         {
@@ -71,6 +100,7 @@ namespace ChatSystem
                             case 13:
                                 if (!PlayerChatText.Equals(""))
                                     messages.Add(playerChatText.ToLower());
+                                PostApi(PlayerChatText);
                                 playerChatText = "";
                                 break;
                             default:
@@ -90,6 +120,7 @@ namespace ChatSystem
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.DrawString(arial, PlayerChatText.ToLower(), new Vector2(1400, 80), Color.White);
+            
             for (int i = messages.Count - 1; i >= 0; i--)
             {
                 if (i < PlayerInput.MAX_MESSAGES)
