@@ -26,6 +26,7 @@ namespace ChatSystem
 
         string url = "https://localhost:7235/api/Chat";
         private int idPost;
+        private string text;
 
         public PlayerInput(ContentManager content)
         {
@@ -71,12 +72,12 @@ namespace ChatSystem
 
                 string res = await response.Content.ReadAsStringAsync();    
 
-                var deserializedProduct = JsonConvert.DeserializeObject<List<Chat>>(res);
+                var deserialized = JsonConvert.DeserializeObject<List<Chat>>(res);
 
-                foreach (var item in deserializedProduct)
+                foreach (var item in deserialized)
                 {
                 messages.Add(item.text);
-
+                    text = item.name;
                 }
 
 
@@ -165,7 +166,7 @@ namespace ChatSystem
                 {
                     int d = 250 - (i * 20);
 
-                    spriteBatch.DrawString(arial, messages[i], new Vector2(1400, d), Color.White);
+                    spriteBatch.DrawString(arial, text + ": "+ messages[i], new Vector2(1400, d), Color.White);
                 }
                 else
                 {
