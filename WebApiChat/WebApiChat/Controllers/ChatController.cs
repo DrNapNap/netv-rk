@@ -29,7 +29,7 @@ namespace WebApiChat
 
         public ActionResult<string> Get(string text)
         {
-            if (_chatDb.TryGetValue(text, out Chat chat))
+            if (_chatDb.TryGetValue(text, out Chat? chat))
             {
                 return Ok(chat);
             }
@@ -41,7 +41,7 @@ namespace WebApiChat
         [HttpPost]
 
 
-        public IActionResult Post([FromBody] Chat chat)
+        public IActionResult Post([FromBody] Chat? chat)
         {
             if (chat == null)
             {
