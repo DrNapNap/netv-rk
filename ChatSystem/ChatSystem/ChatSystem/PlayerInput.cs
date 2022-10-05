@@ -166,7 +166,7 @@ namespace ChatSystem
                 {
                     int d = 250 - (i * 20);
 
-                    spriteBatch.DrawString(arial, text + ": "+ messages[i], new Vector2(1400, d), Color.White);
+                    spriteBatch.DrawString(arial, text + ": "+ messages[i].ToLower(), new Vector2(1400, d), Color.White);
                 }
                 else
                 {
