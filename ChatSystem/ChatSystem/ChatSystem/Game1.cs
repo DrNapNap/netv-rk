@@ -36,6 +36,8 @@ namespace ChatSystem
             // TODO: Add your initialization logic here
             playerInput = new PlayerInput(Content);
 
+            playerInput.ReturnGetApi();
+
             base.Initialize();
         }
 

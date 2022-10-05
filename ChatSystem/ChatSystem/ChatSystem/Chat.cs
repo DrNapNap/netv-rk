@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace ChatSystem
 {
    
-        public class Chat
+       public class  Chat
         {
             public int id { get; set; }
 

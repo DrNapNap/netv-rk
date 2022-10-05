@@ -3,12 +3,13 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Text;
-using System.Text.Json;
+
 
 namespace ChatSystem
 {
@@ -54,26 +55,31 @@ namespace ChatSystem
 
 
         }
-
-        private async void GetApi()
+        public void ReturnGetApi()
         {
+            GetApi();
+        }
 
+       private async void GetApi()
+        {
 
             try
             {
 
-                     HttpClient client = new HttpClient();
-            var response = await client.GetAsync(url);
+                HttpClient client = new HttpClient();
+                var response = await client.GetAsync(url);
 
-                     var responseStream = await response.Content.ReadAsStreamAsync();
+                string res = await response.Content.ReadAsStringAsync();    
 
-           
-                    var data = await System.Text.Json.JsonSerializer.DeserializeAsync<Chat>(responseStream);
+                var deserializedProduct = JsonConvert.DeserializeObject<List<Chat>>(res);
+
+                foreach (var item in deserializedProduct)
+                {
+                messages.Add(item.text);
+
+                }
 
 
-                    messages.Add(data.text.ToString());
-
-                
 
 
             }
@@ -130,9 +136,10 @@ namespace ChatSystem
                             case 13:
                                 if (!PlayerChatText.Equals(""))
                                     PostApi(PlayerChatText);
-                                GetApi();
-                                playerChatText = "";
                                 
+                                messages.Add(playerChatText);
+                                playerChatText = "";
+
                                 break;
                             default:
                                 break;
