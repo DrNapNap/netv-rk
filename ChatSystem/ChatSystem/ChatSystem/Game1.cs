@@ -1,8 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using SharpDX.Direct2D1;
-using System.Drawing;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Diagnostics;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+using System.Threading;
+using System.Timers;
 using Color = Microsoft.Xna.Framework.Color;
 using SpriteBatch = Microsoft.Xna.Framework.Graphics.SpriteBatch;
 
@@ -18,7 +25,7 @@ namespace ChatSystem
 
         public Vector2 ScreenSize { get => screenSize; set => screenSize = value; }
 
-
+        NetworkHandler _networkHandler;
 
         public Game1()
         {
@@ -29,6 +36,24 @@ namespace ChatSystem
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
             ScreenSize = new Vector2(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
+
+            _networkHandler = new NetworkHandler(new NetworkMessageBaseEventHandler());
+            _networkHandler.AddListener<SetInitialPositionsMessage>(SetInitialPositionsMessage);
+            _networkHandler.SendMessageToServer(new JoinMessage() { playerName = "kaj", ResolutionX = graphics.PreferredBackBufferWidth, ResolutionY = graphics.PreferredBackBufferHeight });
+
+
+        }
+
+        private void SetInitialPositionsMessage(SetInitialPositionsMessage initialPositionsMessage)
+        {
+
+            _networkHandler.AddListener<SnapShot>(HandleSnapShotMessage);
+        }
+
+        private void HandleSnapShotMessage(SnapShot e)
+        {
+            Debug.WriteLine("ball is updating!");
+            
         }
 
         protected override void Initialize()
