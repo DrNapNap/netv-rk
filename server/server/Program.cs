@@ -2,13 +2,12 @@
 // See https://aka.ms/new-console-template for more information
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using server;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Timers;
-
+using UDPongServer;
 
 int port = 11000; // listening port
 UdpClient listener = new UdpClient(port); // create listener
@@ -18,21 +17,19 @@ IPEndPoint groupEP = new IPEndPoint(IPAddress.Any, port);//listen to ANY ip, tha
 float updateInterval = 60;
 System.Timers.Timer timer = new System.Timers.Timer();
 timer.Interval = (double)1000f / updateInterval;
+List<Pad> pads = new List<Pad>();
+
+//Pad pad = null;
 
 //Dummy values for proof of concept.
 //This is the actual gamesate, should proably be configured to classes.
 int ballXPos = 0;
 int ballYPos = 0;
-Pad pad = null;
-
 
 timer.Elapsed += SedingTimer;
 
 Thread ListeningThread = new Thread(Listening);
 ListeningThread.Start();
-
-
-
 
 void Listening()
 {
@@ -41,7 +38,7 @@ void Listening()
         Console.WriteLine($"Listening on port: {port}");
         while (true)
         {
-            //Console.WriteLine("waiting for the datas");
+            Console.WriteLine("waiting for the datas");
             var data = listener.Receive(ref groupEP);
 
             OtherHandleMessage(data, groupEP);
@@ -70,14 +67,24 @@ void SedingTimer(object? sender, ElapsedEventArgs e)
     //Get player pos from worldstate?
 
     //All the actual game logic goes here. Or at least this is the starting point.
-    List<float> list = new List<float>();
 
-    list.Add(pad.PosY);
 
+    if (ballXPos <0)
+    {
+        //reset ?
+    }
+    List<float> listOfPadPositionY = new List<float>();
+    foreach (var pad in pads)
+    {
+        listOfPadPositionY.Add(pad.PositionY);
+    }
     ballXPos += 1;
     ballYPos += -1;
-    SnapShot snapShot = new SnapShot() { ballXpos = ballXPos, ballYPos = ballYPos, playerYPos = list};
-    SendTypedNetworkMessage(listener, groupEP, snapShot, MessageType.snapshot);
+    SnapShot snapShot = new SnapShot() { ballXpos = ballXPos, ballYPos = ballYPos, playerYPos = listOfPadPositionY };
+    foreach (var pad in pads)
+    {
+        SendTypedNetworkMessage(listener, pad.IPEndPoint, snapShot, MessageType.snapshot);
+    }
 
 }
 void OtherHandleMessage(byte[] data, IPEndPoint messageSenderInfo)
@@ -103,7 +110,6 @@ void OtherHandleMessage(byte[] data, IPEndPoint messageSenderInfo)
             case MessageType.movement:
                 PlayerMovemenUpdate playerMoveMessage = complexMessage["message"].ToObject<PlayerMovemenUpdate>();
                 HandleMoveMessage(messageSenderInfo, listener, playerMoveMessage);
-
                 break;
             case MessageType.join:
                 JoinMessage recievedJoinMessage = complexMessage["message"].ToObject<JoinMessage>();
@@ -115,31 +121,29 @@ void OtherHandleMessage(byte[] data, IPEndPoint messageSenderInfo)
     }
 }
 
-void HandleMoveMessage(IPEndPoint messageSenderInfo, UdpClient listener, PlayerMovemenUpdate playerMovemenUpdate)
+void HandleMoveMessage(IPEndPoint messageSenderInfo, UdpClient listener, PlayerMovemenUpdate playerMoveUpdate)
 {
-    if (playerMovemenUpdate.direction == Direction.down)
+    //Find pad based on message sender info
+    var pad = pads.Where(x => x.IPEndPoint.ToString() == messageSenderInfo.ToString()).First();
+    if (playerMoveUpdate.direction == Direction.down)
     {
-        pad.PosY += 1;
-
-    }
-    if (playerMovemenUpdate.direction == Direction.up)
-    {
-        pad.PosY -= 1;
-
+        pad.PositionY += 1;
     }
 
-
+    if (playerMoveUpdate.direction == Direction.up)
+    {
+        pad.PositionY -= 1;
+    }
 }
-
 
 void HandleJoinMessage(IPEndPoint messageSenderInfo, UdpClient listener, JoinMessage recievedJoinMessage)
 {
-       pad = new Pad();
- 
-    pad.PosX = recievedJoinMessage.ResolutionX / 2;
+    Console.WriteLine("recieved join message!");
+    var pad = new Pad(messageSenderInfo);
+    pad.PositionX = recievedJoinMessage.ResolutionX / 2;
+    pad.PositionY = recievedJoinMessage.ResolutionY / 2;
 
-    pad.PosY = recievedJoinMessage.ResolutionY / 2;
-
+    pads.Add(pad);
     ballXPos = recievedJoinMessage.ResolutionX / 2;
     ballYPos = recievedJoinMessage.ResolutionY / 2;
     var networkMessage = new SetInitialPositionsMessage()
@@ -149,12 +153,17 @@ void HandleJoinMessage(IPEndPoint messageSenderInfo, UdpClient listener, JoinMes
         leftPlayerXPos = 0,
         leftPlayeryYPos = recievedJoinMessage.ResolutionY / 2,
         rightPlayeryXPos = recievedJoinMessage.ResolutionX,
-        rightPlayeryYPos = recievedJoinMessage.ResolutionY / 2
+        rightPlayeryYPos = recievedJoinMessage.ResolutionY / 2,
+        isLeftPlayer = (pads.Count==1)
     };
 
     SendTypedNetworkMessage(listener, messageSenderInfo, networkMessage, MessageType.initialJoin);
-    //should actually start when two players have joined...
-    timer.Start();
+    if (pads.Count == 2)
+    {
+        //should actually start when two players have joined...
+        timer.Start();
+    }
+
 }
 
 static void SendTypedNetworkMessage(UdpClient listener, IPEndPoint groupEP, NetworkMessageBase networkMessageBase, MessageType messageType)

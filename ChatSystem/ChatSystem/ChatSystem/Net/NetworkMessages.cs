@@ -43,6 +43,7 @@ public class SetInitialPositionsMessage : NetworkMessageBase
     public int rightPlayeryXPos;
     public int ballXpos;
     public int ballYPos;
+    public bool isLeftPlayer;
 }
 
 

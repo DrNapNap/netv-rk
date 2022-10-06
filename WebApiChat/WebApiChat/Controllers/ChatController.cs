@@ -39,8 +39,6 @@ namespace WebApiChat
 
 
         [HttpPost]
-
-
         public IActionResult Post([FromBody] Chat? chat)
         {
             if (chat == null)

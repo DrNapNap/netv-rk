@@ -1,4 +1,4 @@
-﻿public enum MessageType { movement, snapshot, join, initialJoin }
+﻿public enum MessageType { movement, snapshot, join,initialJoin }
 public enum Direction { up, down }
 
 [Serializable]
@@ -20,7 +20,7 @@ public class PlayerMovemenUpdate : NetworkMessageBase
 [Serializable]
 public class SnapShot : NetworkMessageBase
 {
-    public List<float> ?playerYPos;
+    public List<float> playerYPos;
     public int ballXpos;
     public int ballYPos;
 }
@@ -40,6 +40,7 @@ public class SetInitialPositionsMessage : NetworkMessageBase
     public int rightPlayeryXPos;
     public int ballXpos;
     public int ballYPos;
+    public bool isLeftPlayer;
 }
 
 

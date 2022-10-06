@@ -14,12 +14,12 @@ namespace ChatSystem
     public class Pad : GameObject
     {
         private bool isLocal = false;
-        public Direction test;
-
-        public Pad(string contentPath, ContentManager Content, Vector2 startPos, bool islocal = false) : base(contentPath, Content)
+        NetworkHandler networkHandler;
+        public Pad(string contentPath, ContentManager Content, Vector2 startPos, bool islocal = false, NetworkHandler networkHandler = null) : base(contentPath, Content)
         {
             this.position = startPos;
             this.isLocal = islocal;
+            this.networkHandler = networkHandler;
         }
         public override void Update(GameTime gameTime)
         {
@@ -28,11 +28,12 @@ namespace ChatSystem
             {
                 if (kstate.IsKeyDown(Keys.Up))
                 {
-                    position =  new Vector2(0,1);
+                    networkHandler.SendMessageToServer(new PlayerMovemenUpdate() { direction = Direction.up }, MessageType.movement);
                 }
                 if (kstate.IsKeyDown(Keys.Down))
                 {
 
+                    networkHandler.SendMessageToServer(new PlayerMovemenUpdate() { direction = Direction.down }, MessageType.movement);
                 }
             }
             base.Update(gameTime);

@@ -1,10 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using SharpDX.Direct2D1;
 using System.Collections.Generic;
-using System.Diagnostics;
-using static System.Net.Mime.MediaTypeNames;
 using Color = Microsoft.Xna.Framework.Color;
 using SpriteBatch = Microsoft.Xna.Framework.Graphics.SpriteBatch;
 
@@ -17,18 +14,21 @@ namespace ChatSystem
         PlayerInput playerInput;
 
         private Vector2 screenSize;
-
         public Vector2 ScreenSize { get => screenSize; set => screenSize = value; }
-
-        List<GameObject> gamebjects = new List<GameObject>();
-
-        NetworkHandler _networkHandler;
-
-        Ball ball;
 
         private KeyboardState previousState;
         private Direction test;
 
+        List<GameObject> gamebjects = new List<GameObject>();
+
+        List<Pad> pads = new List<Pad>();
+
+        private SpriteFont text; //A single spritefront for the text (viewing score)
+        private Texture2D map;    //It's for Texture2D background
+
+        NetworkHandler _networkHandler;
+
+        Ball ball;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -38,22 +38,29 @@ namespace ChatSystem
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
             ScreenSize = new Vector2(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
-
             _networkHandler = new NetworkHandler(new NetworkMessageBaseEventHandler());
             _networkHandler.AddListener<SetInitialPositionsMessage>(SetInitialPositionsMessage);
-            _networkHandler.SendMessageToServer(new JoinMessage() { playerName = "Nap", ResolutionX = graphics.PreferredBackBufferWidth, ResolutionY = graphics.PreferredBackBufferHeight }, MessageType.join);
-
-
-
+            _networkHandler.SendMessageToServer(new JoinMessage() { playerName = "kaj", ResolutionX = graphics.PreferredBackBufferWidth, ResolutionY = graphics.PreferredBackBufferHeight }, MessageType.join);
         }
 
         private void SetInitialPositionsMessage(SetInitialPositionsMessage initialPositionsMessage)
         {
-
             ball = new Ball("ball", Content, new Vector2(initialPositionsMessage.ballXpos, initialPositionsMessage.ballXpos));
-            gamebjects.Add(ball); ;
-            gamebjects.Add(new Pad("pad", Content, new Vector2(initialPositionsMessage.leftPlayerXPos, initialPositionsMessage.leftPlayeryYPos)));
-            gamebjects.Add(new Pad("pad", Content, new Vector2(initialPositionsMessage.rightPlayeryXPos, initialPositionsMessage.rightPlayeryYPos)));
+            gamebjects.Add(ball);
+
+            if (initialPositionsMessage.isLeftPlayer)
+            {
+                pads.Add(new Pad("pad", Content, new Vector2(initialPositionsMessage.leftPlayerXPos, initialPositionsMessage.leftPlayeryYPos), true, _networkHandler));
+                pads.Add(new Pad("pad", Content, new Vector2(initialPositionsMessage.rightPlayeryXPos, initialPositionsMessage.rightPlayeryYPos)));
+
+            }
+            else
+            {
+                pads.Add(new Pad("pad", Content, new Vector2(initialPositionsMessage.leftPlayerXPos, initialPositionsMessage.leftPlayeryYPos)));
+                pads.Add(new Pad("pad", Content, new Vector2(initialPositionsMessage.rightPlayeryXPos, initialPositionsMessage.rightPlayeryYPos), true, _networkHandler));
+
+            }
+            gamebjects.AddRange(pads);
             gamebjects.ForEach(x => x.Init());
 
             _networkHandler.AddListener<SnapShot>(HandleSnapShotMessage);
@@ -61,27 +68,11 @@ namespace ChatSystem
 
         private void HandleSnapShotMessage(SnapShot e)
         {
-            Debug.WriteLine("ball is updating!");
-
-            List<float> playerY = new List<float>();
-
-
             ball.SetPosition(new Vector2(e.ballXpos, e.ballYPos));
-
-
-            foreach (var item in e.playerYPos)
+            for (int i = 0; i < e.playerYPos.Count; i++)
             {
-                if (e.playerYPos != null)
-                {
-                    playerY.Add(item);
-                }
+                pads[i].SetPosition(new Vector2(pads[i].Position.X, e.playerYPos[i]));
             }
-
-
-
-
-
-
         }
 
         protected override void Initialize()
@@ -110,6 +101,8 @@ namespace ChatSystem
                 Exit();
 
             playerInput.handleOverallInput();
+
+
 
             gamebjects.ForEach(x => x.Update(gameTime));
 

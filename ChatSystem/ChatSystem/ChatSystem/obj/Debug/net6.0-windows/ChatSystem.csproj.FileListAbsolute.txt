@@ -116,3 +116,6 @@ C:\Users\nap\Documents\GitHub\netv-rk\ChatSystem\ChatSystem\ChatSystem\obj\Debug
 C:\Users\nap\Documents\GitHub\netv-rk\ChatSystem\ChatSystem\ChatSystem\obj\Debug\net6.0-windows\ChatSystem.genruntimeconfig.cache
 C:\Users\nap\Documents\GitHub\netv-rk\ChatSystem\ChatSystem\ChatSystem\obj\Debug\net6.0-windows\ref\ChatSystem.dll
 C:\Users\nap\Documents\GitHub\netv-rk\ChatSystem\ChatSystem\ChatSystem\bin\Debug\net6.0-windows\Newtonsoft.Json.dll
+C:\Users\nap\Documents\GitHub\netv-rk\ChatSystem\ChatSystem\ChatSystem\bin\Debug\net6.0-windows\Content\ball.xnb
+C:\Users\nap\Documents\GitHub\netv-rk\ChatSystem\ChatSystem\ChatSystem\bin\Debug\net6.0-windows\Content\pad.xnb
+C:\Users\nap\Documents\GitHub\netv-rk\ChatSystem\ChatSystem\ChatSystem\bin\Debug\net6.0-windows\Content\PongArrow.xnb

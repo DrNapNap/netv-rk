@@ -10,7 +10,6 @@ using Newtonsoft.Json;
 using System.Threading;
 using Newtonsoft.Json.Linq;
 using static ChatSystem.NetworkMessageBaseEventHandler;
-using Microsoft.Xna.Framework.Input;
 
 namespace ChatSystem
 {
@@ -21,7 +20,6 @@ namespace ChatSystem
         IPEndPoint groupEP = new IPEndPoint(IPAddress.Parse("127.0.0.1"), port);
         UdpClient client;
         NetworkMessageBaseEventHandler messageHandler;
-
         public NetworkHandler(NetworkMessageBaseEventHandler networkMessageBaseEventHandler)
         {
             this.messageHandler = networkMessageBaseEventHandler;
@@ -32,34 +30,22 @@ namespace ChatSystem
             ListeningThread.Start();
         }
 
-        public void SendToServer(PlayerMovemenUpdate PlayerMovemenUpdate)
+        public void SendToServer(NetworkMessageBase playerMovementUpdate)
         {
-            
-
             var message = new PlayerMovemenUpdate()
             {
-                direction = PlayerMovemenUpdate.direction
+                direction = Direction.down
             };
 
-
             SendMessageToServer(message, MessageType.movement);
-
-
-
-
         }
-
-
 
         public void SendMessageToServer(NetworkMessageBase networkMessage, MessageType messageType)
         {
-
             var message = new NetworkMessage()
             {
                 type = messageType,
-                message = networkMessage,
-
-                //playerName  = networkMessage.playerName
+                message = networkMessage
             };
 
             var serializedNetworkMessage = JsonConvert.SerializeObject(message);
@@ -69,9 +55,7 @@ namespace ChatSystem
             Debug.WriteLine($"sending json message{serializedNetworkMessage} to server!");
 
 
-
             client.Send(jsonAsBytes);
-
         }
 
         public void AddListener<T>(EventDelegate<T> setInitialPositionsMessage) where T : NetworkMessageBase
@@ -86,6 +70,7 @@ namespace ChatSystem
         {
             try
             {
+                Debug.WriteLine("listening");
                 while (true)
                 {
                     var data = client.Receive(ref groupEP); // listen on port 11000
@@ -93,17 +78,16 @@ namespace ChatSystem
                     var dataDeEncodedShouldBeJson = Encoding.UTF8.GetString(data);
 
 
-                    JObject complexMessage = JObject.Parse(dataDeEncodedShouldBeJson);
-                    JToken complexMessagType = complexMessage["type"];
+                    JObject? complexMessage = JObject.Parse(dataDeEncodedShouldBeJson);
+                    JToken? complexMessagType = complexMessage["type"];
 
-                    Debug.WriteLine("got somehting");
                     if (complexMessage != null && complexMessagType?.Type is JTokenType.Integer)
                     {
                         //we have a message that is successfully serialized
                         //the message "Type" is int (enum)
                         //safe to cast
                         MessageType mesType = (MessageType)complexMessagType.Value<int>();
-                        JToken complexMessagMessage = complexMessage["message"];
+                        JToken? complexMessagMessage = complexMessage["message"];
                         if (complexMessagMessage == null)
                         {
                             return;
@@ -113,7 +97,7 @@ namespace ChatSystem
                         {
                             case MessageType.snapshot:
                                 networkMessage = complexMessage["message"].ToObject<SnapShot>();
-                                Debug.WriteLine("got a snapshot!" + complexMessage);
+                              
                                 messageHandler.Raise(networkMessage);
                                 break;
                             case MessageType.initialJoin:

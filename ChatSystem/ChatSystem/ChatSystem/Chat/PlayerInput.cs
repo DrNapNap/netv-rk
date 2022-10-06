@@ -40,13 +40,9 @@ namespace ChatSystem
             try
             {
                 idPost++;
-
                 var chat = new Chat() { name = "test", id = idPost, text = text };
                 var data = new StringContent(JsonConvert.SerializeObject(chat), Encoding.UTF8, "application/json");
                 var response = await client.PostAsync(url, data);
-
-
-
             }
             catch (Exception)
             {
@@ -79,10 +75,6 @@ namespace ChatSystem
                 messages.Add(item.text);
                     text = item.name;
                 }
-
-
-
-
             }
             catch (Exception)
             {
@@ -96,6 +88,7 @@ namespace ChatSystem
 
         public void handleOverallInput() //get updated 16.6 times every 1 second
         {
+
             KeyboardState key = new KeyboardState();
             Keys[] multipleKeys;
             key = Keyboard.GetState();
@@ -139,7 +132,7 @@ namespace ChatSystem
                                     PostApi(PlayerChatText);
                                 messages.Add(playerChatText);
                                 playerChatText = "";
-
+                             
                                 break;
                             default:
                                 break;
@@ -153,11 +146,16 @@ namespace ChatSystem
         public void LoadContent()
         {
             arial = content.Load<SpriteFont>("Arial");
+
+
+
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.DrawString(arial, PlayerChatText.ToLower(), new Vector2(1400, 80), Color.White);
+
+  
 
             for (int i = messages.Count - 1; i >= 0; i--)
             {
