@@ -101,8 +101,8 @@ void OtherHandleMessage(byte[] data, IPEndPoint messageSenderInfo)
         switch (mesType) // only messages that server wants to react to, therefore no need for initial join, that is meant for clients
         {
             case MessageType.movement:
-                PlayerMovemenUpdate recievedMoveMessage = complexMessage["message"].ToObject<PlayerMovemenUpdate>();
-                HandleMoveMessage(messageSenderInfo, listener, recievedMoveMessage);
+                PlayerMovemenUpdate playerMoveMessage = complexMessage["message"].ToObject<PlayerMovemenUpdate>();
+                HandleMoveMessage(messageSenderInfo, listener, playerMoveMessage);
 
                 break;
             case MessageType.join:
@@ -115,16 +115,16 @@ void OtherHandleMessage(byte[] data, IPEndPoint messageSenderInfo)
     }
 }
 
-void HandleMoveMessage(IPEndPoint messageSenderInfo, UdpClient listener, PlayerMovemenUpdate recievedJoinMessage)
+void HandleMoveMessage(IPEndPoint messageSenderInfo, UdpClient listener, PlayerMovemenUpdate playerMovemenUpdate)
 {
-    if (recievedJoinMessage.direction == Direction.up)
+    if (playerMovemenUpdate.direction == Direction.down)
     {
         pad.PosY += 1;
 
     }
-    if (recievedJoinMessage.direction == Direction.down)
+    if (playerMovemenUpdate.direction == Direction.up)
     {
-        pad.PosX -= 1;
+        pad.PosY -= 1;
 
     }
 

@@ -22,8 +22,6 @@ namespace ChatSystem
         UdpClient client;
         NetworkMessageBaseEventHandler messageHandler;
 
-        private KeyboardState previousState;
-
         public NetworkHandler(NetworkMessageBaseEventHandler networkMessageBaseEventHandler)
         {
             this.messageHandler = networkMessageBaseEventHandler;
@@ -34,58 +32,46 @@ namespace ChatSystem
             ListeningThread.Start();
         }
 
-        public void SendToServer (NetworkMessageBase PlayerMovemenUpdate)
+        public void SendToServer(PlayerMovemenUpdate PlayerMovemenUpdate)
         {
-
-
-
-
-
-                //KeyboardState keyState = Keyboard.GetState();
-                //var message;
-
-                ////gør sådan at du kan købe med Space
-                //if (keyState.IsKeyDown(Keys.Space) && !previousState.IsKeyDown(Keys.Space))
-                //{
-
-                //}
-
-                   var message = new PlayerMovemenUpdate()
-                    {
-                        direction = Direction.down
-                };
-
-
-                SendMessageToServer(message, MessageType.movement);
-
-
-
             
+
+            var message = new PlayerMovemenUpdate()
+            {
+                direction = PlayerMovemenUpdate.direction
+            };
+
+
+            SendMessageToServer(message, MessageType.movement);
+
+
+
+
         }
 
 
 
         public void SendMessageToServer(NetworkMessageBase networkMessage, MessageType messageType)
         {
-  
-                var message = new NetworkMessage()
-                {
-                    type = messageType,
-                    message = networkMessage,
-                    
-                    //playerName  = networkMessage.playerName
-                };
 
-                var serializedNetworkMessage = JsonConvert.SerializeObject(message);
+            var message = new NetworkMessage()
+            {
+                type = messageType,
+                message = networkMessage,
 
-                byte[] jsonAsBytes = Encoding.UTF8.GetBytes(serializedNetworkMessage);
+                //playerName  = networkMessage.playerName
+            };
 
-                Debug.WriteLine($"sending json message{serializedNetworkMessage} to server!");
+            var serializedNetworkMessage = JsonConvert.SerializeObject(message);
+
+            byte[] jsonAsBytes = Encoding.UTF8.GetBytes(serializedNetworkMessage);
+
+            Debug.WriteLine($"sending json message{serializedNetworkMessage} to server!");
 
 
 
-                client.Send(jsonAsBytes);
-            
+            client.Send(jsonAsBytes);
+
         }
 
         public void AddListener<T>(EventDelegate<T> setInitialPositionsMessage) where T : NetworkMessageBase

@@ -20,7 +20,7 @@ public class PlayerMovemenUpdate : NetworkMessageBase
 [Serializable]
 public class SnapShot : NetworkMessageBase
 {
-    public List<float> playerYPos;
+    public List<float> ?playerYPos;
     public int ballXpos;
     public int ballYPos;
 }

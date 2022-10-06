@@ -1,8 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using SharpDX.Direct2D1;
 using System.Collections.Generic;
 using System.Diagnostics;
+using static System.Net.Mime.MediaTypeNames;
 using Color = Microsoft.Xna.Framework.Color;
 using SpriteBatch = Microsoft.Xna.Framework.Graphics.SpriteBatch;
 
@@ -18,7 +20,14 @@ namespace ChatSystem
 
         public Vector2 ScreenSize { get => screenSize; set => screenSize = value; }
 
+        List<GameObject> gamebjects = new List<GameObject>();
+
         NetworkHandler _networkHandler;
+
+        Ball ball;
+
+        private KeyboardState previousState;
+        private Direction test;
 
         public Game1()
         {
@@ -34,13 +43,19 @@ namespace ChatSystem
             _networkHandler.AddListener<SetInitialPositionsMessage>(SetInitialPositionsMessage);
             _networkHandler.SendMessageToServer(new JoinMessage() { playerName = "Nap", ResolutionX = graphics.PreferredBackBufferWidth, ResolutionY = graphics.PreferredBackBufferHeight }, MessageType.join);
 
-            _networkHandler.SendToServer(new PlayerMovemenUpdate() { direction = Direction.up });
+            _networkHandler.SendToServer(new PlayerMovemenUpdate() { direction = test });
 
 
         }
 
         private void SetInitialPositionsMessage(SetInitialPositionsMessage initialPositionsMessage)
         {
+
+            ball = new Ball("ball", Content, new Vector2(initialPositionsMessage.ballXpos, initialPositionsMessage.ballXpos));
+            gamebjects.Add(ball); ;
+            gamebjects.Add(new Pad("pad", Content, new Vector2(initialPositionsMessage.leftPlayerXPos, initialPositionsMessage.leftPlayeryYPos)));
+            gamebjects.Add(new Pad("pad", Content, new Vector2(initialPositionsMessage.rightPlayeryXPos, initialPositionsMessage.rightPlayeryYPos)));
+            gamebjects.ForEach(x => x.Init());
 
             _networkHandler.AddListener<SnapShot>(HandleSnapShotMessage);
         }
@@ -52,6 +67,7 @@ namespace ChatSystem
             List<float> playerY = new List<float>();
 
 
+            ball.SetPosition(new Vector2(e.ballXpos, e.ballYPos));
 
 
             foreach (var item in e.playerYPos)
@@ -83,6 +99,8 @@ namespace ChatSystem
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             playerInput.LoadContent();
+            gamebjects.ForEach(x => x.LoadContent());
+
 
             // TODO: use this.Content to load your game content here
         }
@@ -93,6 +111,9 @@ namespace ChatSystem
                 Exit();
 
             playerInput.handleOverallInput();
+
+            gamebjects.ForEach(x => x.Update(gameTime));
+
 
             // TODO: Add your update logic here
 
@@ -106,6 +127,7 @@ namespace ChatSystem
             // TODO: Add your drawing code here
             spriteBatch.Begin();
             playerInput.Draw(spriteBatch);
+            gamebjects.ForEach(x => x.Draw(gameTime, spriteBatch));
             spriteBatch.End();
 
             base.Draw(gameTime);
