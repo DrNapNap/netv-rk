@@ -43,7 +43,6 @@ namespace ChatSystem
             _networkHandler.AddListener<SetInitialPositionsMessage>(SetInitialPositionsMessage);
             _networkHandler.SendMessageToServer(new JoinMessage() { playerName = "Nap", ResolutionX = graphics.PreferredBackBufferWidth, ResolutionY = graphics.PreferredBackBufferHeight }, MessageType.join);
 
-            _networkHandler.SendToServer(new PlayerMovemenUpdate() { direction = test });
 
 
         }
