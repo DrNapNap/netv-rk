@@ -1,15 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading;
-using System.Timers;
 using Color = Microsoft.Xna.Framework.Color;
 using SpriteBatch = Microsoft.Xna.Framework.Graphics.SpriteBatch;
 
@@ -39,7 +32,9 @@ namespace ChatSystem
 
             _networkHandler = new NetworkHandler(new NetworkMessageBaseEventHandler());
             _networkHandler.AddListener<SetInitialPositionsMessage>(SetInitialPositionsMessage);
-            _networkHandler.SendMessageToServer(new JoinMessage() { playerName = "kaj", ResolutionX = graphics.PreferredBackBufferWidth, ResolutionY = graphics.PreferredBackBufferHeight });
+            _networkHandler.SendMessageToServer(new JoinMessage() { playerName = "Nap", ResolutionX = graphics.PreferredBackBufferWidth, ResolutionY = graphics.PreferredBackBufferHeight }, MessageType.join);
+
+            _networkHandler.SendToServer(new PlayerMovemenUpdate() { direction = Direction.up });
 
 
         }
@@ -53,7 +48,25 @@ namespace ChatSystem
         private void HandleSnapShotMessage(SnapShot e)
         {
             Debug.WriteLine("ball is updating!");
-            
+
+            List<float> playerY = new List<float>();
+
+
+
+
+            foreach (var item in e.playerYPos)
+            {
+                if (e.playerYPos != null)
+                {
+                    playerY.Add(item);
+                }
+            }
+
+
+
+
+
+
         }
 
         protected override void Initialize()

@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using System.Threading;
 using Newtonsoft.Json.Linq;
 using static ChatSystem.NetworkMessageBaseEventHandler;
+using Microsoft.Xna.Framework.Input;
 
 namespace ChatSystem
 {
@@ -20,6 +21,9 @@ namespace ChatSystem
         IPEndPoint groupEP = new IPEndPoint(IPAddress.Parse("127.0.0.1"), port);
         UdpClient client;
         NetworkMessageBaseEventHandler messageHandler;
+
+        private KeyboardState previousState;
+
         public NetworkHandler(NetworkMessageBaseEventHandler networkMessageBaseEventHandler)
         {
             this.messageHandler = networkMessageBaseEventHandler;
@@ -30,13 +34,45 @@ namespace ChatSystem
             ListeningThread.Start();
         }
 
-        public void SendMessageToServer(NetworkMessageBase networkMessage)
+        public void SendToServer (NetworkMessageBase PlayerMovemenUpdate)
+        {
+
+
+
+
+
+                //KeyboardState keyState = Keyboard.GetState();
+                //var message;
+
+                ////gør sådan at du kan købe med Space
+                //if (keyState.IsKeyDown(Keys.Space) && !previousState.IsKeyDown(Keys.Space))
+                //{
+
+                //}
+
+                   var message = new PlayerMovemenUpdate()
+                    {
+                        direction = Direction.down
+                };
+
+
+                SendMessageToServer(message, MessageType.movement);
+
+
+
+            
+        }
+
+
+
+        public void SendMessageToServer(NetworkMessageBase networkMessage, MessageType messageType)
         {
   
                 var message = new NetworkMessage()
                 {
-                    type = MessageType.join,
+                    type = messageType,
                     message = networkMessage,
+                    
                     //playerName  = networkMessage.playerName
                 };
 
@@ -71,8 +107,8 @@ namespace ChatSystem
                     var dataDeEncodedShouldBeJson = Encoding.UTF8.GetString(data);
 
 
-                    JObject? complexMessage = JObject.Parse(dataDeEncodedShouldBeJson);
-                    JToken? complexMessagType = complexMessage["type"];
+                    JObject complexMessage = JObject.Parse(dataDeEncodedShouldBeJson);
+                    JToken complexMessagType = complexMessage["type"];
 
                     Debug.WriteLine("got somehting");
                     if (complexMessage != null && complexMessagType?.Type is JTokenType.Integer)
@@ -81,7 +117,7 @@ namespace ChatSystem
                         //the message "Type" is int (enum)
                         //safe to cast
                         MessageType mesType = (MessageType)complexMessagType.Value<int>();
-                        JToken? complexMessagMessage = complexMessage["message"];
+                        JToken complexMessagMessage = complexMessage["message"];
                         if (complexMessagMessage == null)
                         {
                             return;

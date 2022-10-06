@@ -54,7 +54,7 @@ namespace ChatSystem
                 Debug.Print("err");
             }
 
-
+            
         }
         public void ReturnGetApi()
         {
@@ -137,7 +137,6 @@ namespace ChatSystem
                             case 13:
                                 if (!PlayerChatText.Equals(""))
                                     PostApi(PlayerChatText);
-                                
                                 messages.Add(playerChatText);
                                 playerChatText = "";
 
@@ -167,6 +166,7 @@ namespace ChatSystem
                     int d = 250 - (i * 20);
 
                     spriteBatch.DrawString(arial, text + ": "+ messages[i].ToLower(), new Vector2(1400, d), Color.White);
+                    
                 }
                 else
                 {

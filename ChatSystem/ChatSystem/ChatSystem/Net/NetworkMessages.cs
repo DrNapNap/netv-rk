@@ -9,7 +9,6 @@ public class NetworkMessage
 {
     public MessageType type;
     public NetworkMessageBase message;
-    public string playerName;
 }
 [Serializable]
 public class NetworkMessageBase

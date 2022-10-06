@@ -2,6 +2,7 @@
 // See https://aka.ms/new-console-template for more information
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using server;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
@@ -22,11 +23,16 @@ timer.Interval = (double)1000f / updateInterval;
 //This is the actual gamesate, should proably be configured to classes.
 int ballXPos = 0;
 int ballYPos = 0;
+Pad pad = null;
+
 
 timer.Elapsed += SedingTimer;
 
 Thread ListeningThread = new Thread(Listening);
 ListeningThread.Start();
+
+
+
 
 void Listening()
 {
@@ -35,7 +41,7 @@ void Listening()
         Console.WriteLine($"Listening on port: {port}");
         while (true)
         {
-            Console.WriteLine("waiting for the datas");
+            //Console.WriteLine("waiting for the datas");
             var data = listener.Receive(ref groupEP);
 
             OtherHandleMessage(data, groupEP);
@@ -64,11 +70,13 @@ void SedingTimer(object? sender, ElapsedEventArgs e)
     //Get player pos from worldstate?
 
     //All the actual game logic goes here. Or at least this is the starting point.
+    List<float> list = new List<float>();
 
-   
+    list.Add(pad.PosY);
+
     ballXPos += 1;
     ballYPos += -1;
-    SnapShot snapShot = new SnapShot() { ballXpos = ballXPos, ballYPos = ballYPos };
+    SnapShot snapShot = new SnapShot() { ballXpos = ballXPos, ballYPos = ballYPos, playerYPos = list};
     SendTypedNetworkMessage(listener, groupEP, snapShot, MessageType.snapshot);
 
 }
@@ -93,6 +101,9 @@ void OtherHandleMessage(byte[] data, IPEndPoint messageSenderInfo)
         switch (mesType) // only messages that server wants to react to, therefore no need for initial join, that is meant for clients
         {
             case MessageType.movement:
+                PlayerMovemenUpdate recievedMoveMessage = complexMessage["message"].ToObject<PlayerMovemenUpdate>();
+                HandleMoveMessage(messageSenderInfo, listener, recievedMoveMessage);
+
                 break;
             case MessageType.join:
                 JoinMessage recievedJoinMessage = complexMessage["message"].ToObject<JoinMessage>();
@@ -104,8 +115,31 @@ void OtherHandleMessage(byte[] data, IPEndPoint messageSenderInfo)
     }
 }
 
+void HandleMoveMessage(IPEndPoint messageSenderInfo, UdpClient listener, PlayerMovemenUpdate recievedJoinMessage)
+{
+    if (recievedJoinMessage.direction == Direction.up)
+    {
+        pad.PosY += 1;
+
+    }
+    if (recievedJoinMessage.direction == Direction.down)
+    {
+        pad.PosX -= 1;
+
+    }
+
+
+}
+
+
 void HandleJoinMessage(IPEndPoint messageSenderInfo, UdpClient listener, JoinMessage recievedJoinMessage)
 {
+       pad = new Pad();
+ 
+    pad.PosX = recievedJoinMessage.ResolutionX / 2;
+
+    pad.PosY = recievedJoinMessage.ResolutionY / 2;
+
     ballXPos = recievedJoinMessage.ResolutionX / 2;
     ballYPos = recievedJoinMessage.ResolutionY / 2;
     var networkMessage = new SetInitialPositionsMessage()
