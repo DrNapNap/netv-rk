@@ -17,7 +17,7 @@ namespace ChatSystem
     {
 
         static int port = 11000;
-        IPEndPoint groupEP = new IPEndPoint(IPAddress.Parse("127.0.0.1"), port);
+        IPEndPoint groupEP = new IPEndPoint(IPAddress.Parse("49.12.106.231"), port);
         UdpClient client;
         NetworkMessageBaseEventHandler messageHandler;
         public NetworkHandler(NetworkMessageBaseEventHandler networkMessageBaseEventHandler)

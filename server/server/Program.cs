@@ -168,7 +168,9 @@ void HandleJoinMessage(IPEndPoint messageSenderInfo, UdpClient listener, JoinMes
 
 static void SendTypedNetworkMessage(UdpClient listener, IPEndPoint groupEP, NetworkMessageBase networkMessageBase, MessageType messageType)
 {
-    var message = new NetworkMessage()
+    try
+    {
+     var message = new NetworkMessage()
     {
         type = messageType,
         message = networkMessageBase
@@ -178,6 +180,20 @@ static void SendTypedNetworkMessage(UdpClient listener, IPEndPoint groupEP, Netw
     byte[] jsonAsBytes = Encoding.UTF8.GetBytes(serializedNetworkMessage);
 
     Debug.WriteLine($"sending json message{serializedNetworkMessage} to client!!");
-
     listener.Send(jsonAsBytes, groupEP);
+
+    }
+    catch (SocketException e)
+    {
+        Console.WriteLine(e);
+    }
+    finally
+    {
+        Console.WriteLine("dadwa");
+
+        listener.Close();
+    }
+
+
+
 }

@@ -24,7 +24,7 @@ namespace ChatSystem
 
         public List<string> messages = new List<string>();
 
-        string url = "https://localhost:7235/api/Chat";
+        string url = "https://www.copencity.club:2096/api/Chat";
         private int idPost;
         private string text;
 
@@ -70,7 +70,7 @@ namespace ChatSystem
 
                 var deserialized = JsonConvert.DeserializeObject<List<Chat>>(res);
 
-                foreach (var item in deserialized)
+                foreach (Chat item in deserialized)
                 {
                 messages.Add(item.text);
                     text = item.name;
