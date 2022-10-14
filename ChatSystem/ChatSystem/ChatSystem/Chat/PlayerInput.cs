@@ -145,7 +145,7 @@ namespace ChatSystem
 
         public void LoadContent()
         {
-            arial = content.Load<SpriteFont>("Arial");
+            arial = content.Load<SpriteFont>("Font");
 
 
 

@@ -1,3 +1,3 @@
 ﻿
-using var game = new ChatSystem.Game1();
+using var game = new ChatSystem.GameWorld();
 game.Run();

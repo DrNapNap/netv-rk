@@ -119,9 +119,7 @@ C:\Users\nap\Documents\GitHub\netv-rk\ChatSystem\ChatSystem\ChatSystem\bin\Debug
 C:\Users\nap\Documents\GitHub\netv-rk\ChatSystem\ChatSystem\ChatSystem\bin\Debug\net6.0-windows\Content\ball.xnb
 C:\Users\nap\Documents\GitHub\netv-rk\ChatSystem\ChatSystem\ChatSystem\bin\Debug\net6.0-windows\Content\pad.xnb
 C:\Users\nap\Documents\GitHub\netv-rk\ChatSystem\ChatSystem\ChatSystem\bin\Debug\net6.0-windows\Content\PongArrow.xnb
-C:\Users\vimbe\OneDrive\Dokumenter\GitHub\netv-rk\ChatSystem\ChatSystem\ChatSystem\bin\Debug\net6.0-windows\Content\Arial.xnb
 C:\Users\vimbe\OneDrive\Dokumenter\GitHub\netv-rk\ChatSystem\ChatSystem\ChatSystem\bin\Debug\net6.0-windows\Content\ball.xnb
-C:\Users\vimbe\OneDrive\Dokumenter\GitHub\netv-rk\ChatSystem\ChatSystem\ChatSystem\bin\Debug\net6.0-windows\Content\GameThumbnail.xnb
 C:\Users\vimbe\OneDrive\Dokumenter\GitHub\netv-rk\ChatSystem\ChatSystem\ChatSystem\bin\Debug\net6.0-windows\Content\pad.xnb
 C:\Users\vimbe\OneDrive\Dokumenter\GitHub\netv-rk\ChatSystem\ChatSystem\ChatSystem\bin\Debug\net6.0-windows\Content\PongArrow.xnb
 C:\Users\vimbe\OneDrive\Dokumenter\GitHub\netv-rk\ChatSystem\ChatSystem\ChatSystem\bin\Debug\net6.0-windows\ChatSystem.exe
@@ -162,3 +160,6 @@ C:\Users\vimbe\OneDrive\Dokumenter\GitHub\netv-rk\ChatSystem\ChatSystem\ChatSyst
 C:\Users\vimbe\OneDrive\Dokumenter\GitHub\netv-rk\ChatSystem\ChatSystem\ChatSystem\obj\Debug\net6.0-windows\ChatSystem.pdb
 C:\Users\vimbe\OneDrive\Dokumenter\GitHub\netv-rk\ChatSystem\ChatSystem\ChatSystem\obj\Debug\net6.0-windows\ChatSystem.genruntimeconfig.cache
 C:\Users\vimbe\OneDrive\Dokumenter\GitHub\netv-rk\ChatSystem\ChatSystem\ChatSystem\obj\Debug\net6.0-windows\ref\ChatSystem.dll
+C:\Users\vimbe\OneDrive\Dokumenter\GitHub\netv-rk\ChatSystem\ChatSystem\ChatSystem\bin\Debug\net6.0-windows\Content\BackGround.xnb
+C:\Users\vimbe\OneDrive\Dokumenter\GitHub\netv-rk\ChatSystem\ChatSystem\ChatSystem\bin\Debug\net6.0-windows\Content\Font.xnb
+C:\Users\vimbe\OneDrive\Dokumenter\GitHub\netv-rk\ChatSystem\ChatSystem\ChatSystem\bin\Debug\net6.0-windows\Content\newBall.xnb

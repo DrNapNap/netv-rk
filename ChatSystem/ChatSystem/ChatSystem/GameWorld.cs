@@ -7,7 +7,7 @@ using SpriteBatch = Microsoft.Xna.Framework.Graphics.SpriteBatch;
 
 namespace ChatSystem
 {
-    public class Game1 : Game
+    public class GameWorld : Game
     {
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
@@ -29,7 +29,7 @@ namespace ChatSystem
         NetworkHandler _networkHandler;
 
         Ball ball;
-        public Game1()
+        public GameWorld()
         {
             graphics = new GraphicsDeviceManager(this);
             graphics.PreferredBackBufferWidth = 1600;
@@ -45,7 +45,7 @@ namespace ChatSystem
 
         private void SetInitialPositionsMessage(SetInitialPositionsMessage initialPositionsMessage)
         {
-            ball = new Ball("ball", Content, new Vector2(initialPositionsMessage.ballXpos, initialPositionsMessage.ballXpos));
+            ball = new Ball("newBall", Content, new Vector2(initialPositionsMessage.ballXpos, initialPositionsMessage.ballXpos));
             gamebjects.Add(ball);
 
             if (initialPositionsMessage.isLeftPlayer)
@@ -90,6 +90,7 @@ namespace ChatSystem
             spriteBatch = new SpriteBatch(GraphicsDevice);
             playerInput.LoadContent();
             gamebjects.ForEach(x => x.LoadContent());
+            map = Content.Load<Texture2D>("BackGround");  // Download background picture for our game
 
 
             // TODO: use this.Content to load your game content here
@@ -118,8 +119,12 @@ namespace ChatSystem
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
+            spriteBatch.Draw(map, new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 2, SpriteEffects.None, 0);
+
             playerInput.Draw(spriteBatch);
             gamebjects.ForEach(x => x.Draw(gameTime, spriteBatch));
+
+
             spriteBatch.End();
 
             base.Draw(gameTime);

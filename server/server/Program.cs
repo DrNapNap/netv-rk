@@ -9,6 +9,7 @@ using System.Text;
 using System.Timers;
 using UDPongServer;
 
+Direction ballDirection = new Direction();
 int port = 11000; // listening port
 UdpClient listener = new UdpClient(port); // create listener
 IPEndPoint groupEP = new IPEndPoint(IPAddress.Any, port);//listen to ANY ip, that sends on the given port!
@@ -26,6 +27,9 @@ List<Pad> pads = new List<Pad>();
 int ballXPos = 0;
 int ballYPos = 0;
 
+int mapXPos = 0;
+int mapYPos = 0;
+
 timer.Elapsed += SedingTimer;
 
 Thread ListeningThread = new Thread(Listening);
@@ -38,7 +42,7 @@ void Listening()
         Console.WriteLine($"Listening on port: {port}");
         while (true)
         {
-            Console.WriteLine("waiting for the datas");
+            //Console.WriteLine("waiting for the datas");
             var data = listener.Receive(ref groupEP);
 
             OtherHandleMessage(data, groupEP);
@@ -55,10 +59,9 @@ void Listening()
     }
 }
 
-
-void SedingTimer(object? sender, ElapsedEventArgs e)
+void SedingTimer(object? sender, ElapsedEventArgs e )
 {
-    //simular to update loop :)
+    //simular to update loop 🙂
 
     //update ball pos
 
@@ -69,7 +72,7 @@ void SedingTimer(object? sender, ElapsedEventArgs e)
     //All the actual game logic goes here. Or at least this is the starting point.
 
 
-    if (ballXPos <0)
+    if (ballXPos < 0)
     {
         //reset ?
     }
@@ -78,8 +81,11 @@ void SedingTimer(object? sender, ElapsedEventArgs e)
     {
         listOfPadPositionY.Add(pad.PositionY);
     }
-    ballXPos += 1;
-    ballYPos += -1;
+
+    BallMove();
+
+    //ballXPos += 1;
+    //ballYPos += -1;
     SnapShot snapShot = new SnapShot() { ballXpos = ballXPos, ballYPos = ballYPos, playerYPos = listOfPadPositionY };
     foreach (var pad in pads)
     {
@@ -87,6 +93,55 @@ void SedingTimer(object? sender, ElapsedEventArgs e)
     }
 
 }
+
+void BallMove()
+{
+    switch (ballDirection)
+    {
+        case Direction.up:
+            ballXPos += 1;
+            ballYPos -= 1;
+            break;
+        case Direction.down:
+            ballXPos += 1;
+            ballYPos += 1;
+            break;
+        case Direction.left:
+            ballXPos -= 1;
+            ballYPos += 1;
+            break;
+        case Direction.right:
+            ballXPos -= 1;
+            ballYPos -= 1;
+            break;
+        default:
+            break;
+    }
+
+    if (ballYPos < 0 && ballDirection == Direction.up)
+    {
+        ballDirection = Direction.down;
+    }
+
+    else if (ballXPos > 800 && ballDirection == Direction.down)
+    {
+        ballDirection = Direction.left;
+    }
+
+    else if (ballYPos > 480 && ballDirection == Direction.left)
+    {
+        ballDirection = Direction.right;
+    }
+
+    else if (ballXPos < 0 && ballDirection == Direction.right)
+    {
+        ballDirection = Direction.left;
+    }
+
+}
+
+
+
 void OtherHandleMessage(byte[] data, IPEndPoint messageSenderInfo)
 {
     var dataDeEncodedShouldBeJson = Encoding.UTF8.GetString(data);
@@ -168,8 +223,7 @@ void HandleJoinMessage(IPEndPoint messageSenderInfo, UdpClient listener, JoinMes
 
 static void SendTypedNetworkMessage(UdpClient listener, IPEndPoint groupEP, NetworkMessageBase networkMessageBase, MessageType messageType)
 {
-    try
-    {
+
      var message = new NetworkMessage()
     {
         type = messageType,
@@ -182,17 +236,8 @@ static void SendTypedNetworkMessage(UdpClient listener, IPEndPoint groupEP, Netw
     Debug.WriteLine($"sending json message{serializedNetworkMessage} to client!!");
     listener.Send(jsonAsBytes, groupEP);
 
-    }
-    catch (SocketException e)
-    {
-        Console.WriteLine(e);
-    }
-    finally
-    {
-        Console.WriteLine("dadwa");
+    
 
-        listener.Close();
-    }
 
 
 

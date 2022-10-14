@@ -1,11 +1,12 @@
 ﻿public enum MessageType { movement, snapshot, join,initialJoin }
-public enum Direction { up, down }
+public enum Direction { up, down, left, right }
+
 
 [Serializable]
 public class NetworkMessage
 {
     public MessageType type;
-    public NetworkMessageBase message;
+    public NetworkMessageBase? message;
 }
 [Serializable]
 public class NetworkMessageBase
@@ -20,14 +21,14 @@ public class PlayerMovemenUpdate : NetworkMessageBase
 [Serializable]
 public class SnapShot : NetworkMessageBase
 {
-    public List<float> playerYPos;
+    public List<float>? playerYPos;
     public int ballXpos;
     public int ballYPos;
 }
 [Serializable]
 public class JoinMessage : NetworkMessageBase
 {
-    public string playerName;
+    public string? playerName;
     public int ResolutionX;
     public int ResolutionY;
 }
