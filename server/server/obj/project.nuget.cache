@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "+erVWaCvAhqIr9pfWgr5jE+aqydDBLBOilpqTtVp87hfnovLxMucsYFVEALQBU8eLusuzswazqJICyLZhBM2ZQ==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\vimbe\\OneDrive\\Dokumenter\\GitHub\\netv-rk\\server\\server\\server.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\vimbe\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512"
+  ],
+  "logs": []
+}
